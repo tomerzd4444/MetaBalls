@@ -5,7 +5,7 @@
 
 const int randPerc = 500;
 const float randDiv = 10000;
-const float rad = 0.2;
+const float rad = 0.15;
 
 MetaBalls::Blob::Blob()
 {

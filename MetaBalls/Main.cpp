@@ -7,7 +7,7 @@ using namespace MetaBalls;
 
 const int width = 800;
 const int height = 800;
-const int blobsAmount = 2;
+const int blobsAmount = 10;
 float* PixelBuffer;
 void setPixel(int, int, float);
 
@@ -17,7 +17,22 @@ int size = width * height * 3;
 
 float dist(float x1, float y1, float x2, float y2) {
 
-    return pow(pow(x1 - x2, 2) + pow(y1 - y2, 2), 0.5);
+    return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+}
+
+float calcInvSqRoot(float n) {
+
+    const float threehalfs = 1.5F;
+    float y = n;
+
+    long i = *(long*)&y;
+
+    i = 0x5f3759df - (i >> 1);
+    y = *(float*)&i;
+
+    y = y * (threehalfs - ((n * 0.5F) * y * y));
+
+    return y;
 }
 
 
@@ -51,6 +66,7 @@ int main(void)
     double previousTime = glfwGetTime();
     int frameCount = 0;
     /* Loop until the user closes the window */
+    int scale = 125;
     while (!glfwWindowShouldClose(window))
     {
         double currentTime = glfwGetTime();
@@ -75,9 +91,9 @@ int main(void)
                     // Sets color for each pixel
                     float adjx = width * (b->pos[0] + 1) / 2;
                     float adjy = height * (b->pos[1] + 1) / 2;
-                    float d = dist(x, y, adjx, adjy);
-                    int scale = 350;
-                    sum += scale * b->r / d;
+                    float d = calcInvSqRoot(dist(x, y, adjx, adjy));
+                    
+                    sum += scale * b->r * d;
                 }
                 //pixels[index][0] = sum;
                 //pixels[index][1] = sum;
